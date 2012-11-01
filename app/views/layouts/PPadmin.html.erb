@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Frontal Lobe</title>
+  
+</head>
+<body>
+	<script type="text/javascript">
+	$(document).ready(function() 
+	    	{ 
+	      	  $(".tablesorter").tablesorter(); 
+	   	 } 
+		);
+		$(document).ready(function() {
+	
+		//When page loads...
+		$(".tab_content").hide(); //Hide all content
+		$("ul.tabs li:first").addClass("active").show(); //Activate first tab
+		$(".tab_content:first").show(); //Show first tab content
+	
+		//On Click Event
+		$("ul.tabs li").click(function() {
+	
+			$("ul.tabs li").removeClass("active"); //Remove any "active" class
+			$(this).addClass("active"); //Add "active" class to selected tab
+			$(".tab_content").hide(); //Hide all tab content
+	
+			var activeTab = $(this).find("a").attr("href"); //Find the href attribute value to identify the active tab + content
+			$(activeTab).fadeIn(); //Fade in the active ID content
+			return false;
+		});
+
+	});
+	
+$(document).ready(function() {
+
+  // choose text for the show/hide link - can contain HTML (e.g. an image)
+  var showText='Show';
+  var hideText='Hide';
+  
+  // initialise the visibility check
+  var is_visible = false;
+  
+  // append show/hide links to the element directly preceding the element with a class of "toggle"
+  $('.toggle').prev().append(' <a href="#" class="toggleLink">'+hideText+'</a>');
+  
+  // hide all of the elements with a class of 'toggle'
+  $('.toggle').show();
+  
+  // capture clicks on the toggle links
+  $('a.toggleLink').click(function() {
+    // switch visibility
+    is_visible = !is_visible;
+    
+    // change the link text depending on whether the element is shown or hidden
+    if ($(this).text()==showText) {
+    $(this).text(hideText);
+    $(this).parent().next('.toggle').slideDown('slow');
+    }
+    else {
+    $(this).text(showText);
+    $(this).parent().next('.toggle').slideUp('slow');
+    }
+    
+    // return false so any link destination is not followed
+    return false;
+
+  }); 
+});
+</script>
+<script type="text/javascript">
+    $(function(){
+        $('.column').equalHeight();
+    });
+</script>
+
+	<header id="header">
+		<hgroup>
+			<h1 class="site_title"><a href="#"><%=Rails.application.class.parent.name%> Admin</a></h1>
+			<h2 class="section_title"><%=@page_name%></h2><div class="btn_view_site"><a href="/site/index" target="_blank">View Site</a></div>
+			
+		</hgroup>
+	</header> <!-- end of header bar -->
+	
+	<section id="secondary_bar">
+		<div class="user">
+			<p><%=@login_name%></p>
+			<a class="logout_user" href="/admin/logout" title="Logout">Logout</a>
+		</div>
+		<div class="breadcrumbs_container">
+			<article class="breadcrumbs"><a href="index.html"><%=@section_name%></a> <div class="breadcrumb_divider"></div> <a class="current"><%=@page_name%></a></article>
+			
+		</div>
+	</section><!-- end of secondary bar -->
+	
+	<aside id="sidebar" class="column">
+		<form class="quick_search">
+			<input type="text" value="Quick Search" onfocus="if(!this._haschanged){this.value=''};this._haschanged=true;">
+		</form>
+		<hr/>
+		<%
+		@menu_items.each{|mi|
+			%><h3><%=mi[:name]%></h3>
+			<ul class="toggle">
+			<%
+			mi[:children].each{|mic|
+				%>
+				<li class="<%=mic[:class]%>"><a href="<%=mic[:action]%>"><%=mic[:name]%></a></li>
+				<%
+			} 
+			%></ul><%
+		} unless @menu_items.nil?
+		
+		if @menu_items.nil?
+			%><p>Menu Unavailable</p><%
+		end
+		%>
+				
+		<footer>
+			<hr />
+			<p>&nbsp;</p>
+			<p>Quizzical quirk</p>
+			<p>&nbsp;</p>
+			
+		</footer>
+	</aside><!-- end of sidebar -->
+	<section id="main" class="column width_full">
+		<div class="clear"></div>
+		<%
+		#Server Sais:
+		unless @server_sais.nil?
+			%><h4 class="alert_<%=@server_sais_type%>"><%=raw(@server_sais)%></h4><%
+		end
+		%>
+		
+	
+		<%= yield %>
+		<div class="spacer"></div>
+	</section>
+</body>
+</html>

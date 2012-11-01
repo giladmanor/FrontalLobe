@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dezquare Admin Login</title>
+  <%= stylesheet_link_tag    "admin", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body style="background-image: url(/assets/admin/login_bkg.png)">
+		
+	<section id="main" class="column width_full" style="float:left;margin-left:30%;margin-top:10%; background: url();width: 400px ;">
+		<div class="clear"></div>
+		<%
+		#Server Sais:
+		unless @server_sais.nil?
+			%><h4 class="alert_<%=@server_sais_type%>"><%=raw(@server_sais)%></h4><%
+		end
+		%>
+		
+		<article class="module width_full">
+			<form action="/admin/login" id="test" name="test" method="post">
+			<header><h3>Please enter User name and Password</h3></header>
+				<div class="module_content " style="width: 90%">
+						<fieldset class="" >
+							<label>User</label>
+							<input type="text" name="user" style="width: 90%">
+							<label>Password</label>
+							<input type="password" name="password" style="width: 90%">
+							<div class="clear">&nbsp;</div>
+						</fieldset>
+						
+				</div>
+			<footer>
+				<div class="submit_link">
+					<input type="submit" value="Login" class="alt_btn">
+					
+				</div>
+			</footer>
+			</form>
+		</article><!-- end of post new article -->
+		
+		<div class="spacer"></div>
+		<h4 class="quizic">Quizzical quirk</h4>
+	</section>
+</body>
+</html>
+		
+
+
