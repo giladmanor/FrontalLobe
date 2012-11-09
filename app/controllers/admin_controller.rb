@@ -56,19 +56,10 @@ class AdminController < ApplicationController
     @login_name = "Uncle Ruckus"
     @menu_items = [
       {:name=>'Main',:children=>[
-        {:name=>'Dashboard',:class=>"icn_folder",:action=>'/admin/dashboard'},
-        {:name=>'Shopper Management',:class=>"icn_view_users",:action=>'/user/list?view=shoppers'},
-        {:name=>'Designer Management',:class=>"icn_view_users",:action=>'/user/list?view=designers'},
-        {:name=>'Unregistered Designers',:class=>"icn_view_users",:action=>'/user/list?view=pendings'}  ]},
-      {:name=>'Configurations',:children=>[
-        {:name=>'Categories',:class=>"icn_categories",:action=>'/category/list'},
-        {:name=>'Tags',:class=>"icn_tags",:action=>'/tag/list'},
-        {:name=>'Languages',:class=>"icn_audio",:action=>'/languages/list'},
-        {:name=>'LSD: Languages',:class=>"icn_audio",:action=>'/lsd/list?entity=language'},
-        {:name=>'Game Types',:class=>"icn_video",:action=>'/game_type/list'}]},
-      
-        
-      ]
+        {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
+        {:name=>'Social Sharing',:class=>"icon-glass",:action=>'/admin/social'},
+        {:name=>'Top Ratings',:class=>"icon-heart",:action=>'/admin/rating'}
+      ]}]
   end
   
 end
