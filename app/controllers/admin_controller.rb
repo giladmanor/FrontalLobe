@@ -5,7 +5,7 @@ class AdminController < ApplicationController
   
   def login
     
-    if params[:user]=="a" && params[:password]=="a"
+    if params[:user]=="jz" && params[:password]=="kcsd8bhvb85sdye8"
       session[:login]=:valid
       redirect_to :action=>:dashboard
       return
@@ -20,10 +20,80 @@ class AdminController < ApplicationController
   end
   
   def dashboard
+    todays_agg = Aggregate.order("timestamp ASC").last
+    yesterday = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",1.day.ago]).last || {}
+    last_week = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",7.day.ago]).last || {}
+    last_month = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",1.month.ago]).last || {}
+    
+    @users = {
+      :all=> todays_agg.users,
+      :day=> todays_agg.users-yesterday.users,
+      :week=>todays_agg.users-last_week.users,
+      :month=>todays_agg.users-last_month.users
+    } 
+    @clues = {
+      :all=>todays_agg.clues,
+      :day=> todays_agg.clues-yesterday.clues,
+      :week=>todays_agg.clues-last_week.clues,
+      :month=>todays_agg.clues-last_month.clues
+    } 
+    @glues = {
+      :all=>todays_agg.glues,
+      :day=> todays_agg.glues-yesterday.glues,
+      :week=>todays_agg.glues-last_week.glues,
+      :month=>todays_agg.glues-last_month.glues
+    } 
+    @scribbles = {
+      :all=>todays_agg.scribbles,
+      :day=> todays_agg.scribbles-yesterday.scribbles,
+      :week=>todays_agg.scribbles-last_week.scribbles,
+      :month=>todays_agg.scribbles-last_month.scribbles
+    } 
+    
     
   end
   
+  def graphs
+    
+  end
   
+  def trending
+    uri = URI.parse("http://wikibrains.com/bomba/trending")
+    logger.debug "Accessing #{uri.host} #{uri.port} #{uri.request_uri}"
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true if uri.scheme == 'https'
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = http.request(request)
+    @trending = ActiveSupport::JSON.decode(response.body)
+    
+  end
+  
+  def set_trending
+    k="liebrubhvs984bsly48!35yf023985syv408l4ylst0w934ucy#as03495tvys0b*4tysa"
+    #w=Rack::Utils.escape(params[:w])
+    w=params[:w]
+    logger.debug w
+    r="set_trending_skd48bvk948vsy4lt8veyl4t8vxbl4t8y"
+    #url="http://108.171.184.244/bomba/#{r}"
+    url="http://wikibrains.com/bomba/#{r}"
+    logger.debug url
+    uri = URI.parse(url)
+    logger.debug "Accessing #{uri.host} #{uri.port} #{uri.request_uri}"
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true if uri.scheme == 'https'
+    http = Net::HTTP.new(uri.host, uri.port)
+
+    request = Net::HTTP::Post.new(uri.request_uri)
+    request.set_form_data({"k" => k, "w" => w.to_json})
+    logger.debug w.to_json
+    response = http.request(request)
+    
+    target = "trending.txt"
+    File.open(target, "w+") do |f|
+      f.write(params[:w].to_json)
+    end
+    redirect_to :action=>:trending
+  end
   
   def index
     #redirect_to :action=>:login
@@ -57,8 +127,9 @@ class AdminController < ApplicationController
     @menu_items = [
       {:name=>'Main',:children=>[
         {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
-        {:name=>'Social Sharing',:class=>"icon-glass",:action=>'/admin/social'},
-        {:name=>'Top Ratings',:class=>"icon-heart",:action=>'/admin/rating'}
+        {:name=>'Trending',:class=>"icon-glass",:action=>'/admin/trending'},
+        {:name=>'Graphs',:class=>"icon-glass",:action=>'/admin/graphs'},
+        {:name=>'More Graphs',:class=>"icon-heart",:action=>'/admin/more_graphs'}
       ]}]
   end
   

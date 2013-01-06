@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  clues: 1
+  glues: 1
+  scribbles: 1
+  users: 1
+
+two:
+  clues: 1
+  glues: 1
+  scribbles: 1
+  users: 1

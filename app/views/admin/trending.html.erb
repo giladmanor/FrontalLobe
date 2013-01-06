@@ -1,0 +1,46 @@
+
+			
+<div id="content" class="span10">
+<!-- content starts -->
+	<div class="box span12">
+		<div class="box-header well" data-original-title="">
+			<h2><i class="icon-edit"></i> Trending Topics</h2>
+			<div class="box-icon">
+				<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
+				<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+				<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+			</div>
+		</div>
+	
+	
+	<%= form_tag("/admin/set_trending", :method => "post") do %>
+  
+	
+	<div class="controls">
+	  <%
+	  @trending.each{|t|
+	  	%>
+		<label class="checkbox inline">
+			<div class="checker" id="uniform-inlineCheckbox1"><span><input type="checkbox" id="inlineCheckbox1" name="w[]" value="<%=t%>" style="opacity: 0;"></span></div> <%=t%>
+		</label>
+	  	<%
+	  }
+	  %>
+	  
+	</div>
+	
+		<button type="submit" class="btn btn-primary">Save changes</button>
+		
+		
+	<% end %>
+		
+	</div>
+	
+	
+
+
+		<!-- content ends -->
+</div><!--/#content.span10-->
+				
+				
+		
