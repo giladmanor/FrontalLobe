@@ -54,8 +54,28 @@ class AdminController < ApplicationController
   end
   
   def graphs
+    @from_d = params[:from_date].nil? ? 7.day.ago : Date.new(params[:from_date][:year].to_i,params[:from_date][:month].to_i,params[:from_date][:day].to_i)
+    @to_d = params[:to_date].nil? ? Time.now : Date.new(params[:to_date][:year].to_i,params[:to_date][:month].to_i,params[:to_date][:day].to_i)
+    
+    
+    from_a = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",@from_d]).last || {}
+    @to_a = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",@to_d]).last || {}
+    
+    @users_total = @to_a.users
+    @users = @to_a.users - from_a.users
+    @clues = @to_a.clues - from_a.clues
+    @glues = @to_a.glues - from_a.glues
+    @scribbles = @to_a.scribbles - from_a.scribbles
     
   end
+  
+  def maps
+    
+    @lat = 0.0
+    @lng = 0.0
+    render :layout=>false
+  end
+  
   
   def trending
     uri = URI.parse("http://wikibrains.com/bomba/trending")
@@ -128,8 +148,8 @@ class AdminController < ApplicationController
       {:name=>'Main',:children=>[
         {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
         {:name=>'Trending',:class=>"icon-glass",:action=>'/admin/trending'},
-        {:name=>'Graphs',:class=>"icon-glass",:action=>'/admin/graphs'},
-        {:name=>'More Graphs',:class=>"icon-heart",:action=>'/admin/more_graphs'}
+        {:name=>'Summary',:class=>"icon-glass",:action=>'/admin/graphs'},
+        {:name=>'Map',:class=>"icon-heart",:action=>'/admin/maps'}
       ]}]
   end
   
