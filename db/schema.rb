@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130104165656) do
+ActiveRecord::Schema.define(:version => 20130110182715) do
 
   create_table "aggregates", :force => true do |t|
     t.integer  "clues"
@@ -27,8 +27,11 @@ ActiveRecord::Schema.define(:version => 20130104165656) do
     t.integer  "user_id"
     t.string   "page_name"
     t.string   "word"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.string   "ip"
+    t.string   "user_action"
+    t.string   "content_source"
   end
 
 end

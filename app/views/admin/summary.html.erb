@@ -1,10 +1,96 @@
 
+<script type="text/javascript">
+		//chart with points
+<%
+u_shift = params[:differencial]=="true" ? @from_a.users : 0
+c_shift = params[:differencial]=="true" ? @from_a.clues : 0
+g_shift = params[:differencial]=="true" ? @from_a.glues : 0
+s_shift = params[:differencial]=="true" ? @from_a.scribbles : 0
+
+
+%>		
+		
+$(document).ready(function(){
+	if($("#graph").length)
+	{
+		var users = <%=raw(@collection.each_with_index.map { |a,i| [i,a.users-u_shift] }.to_json)%>;
+		var clues = <%=raw(@collection.each_with_index.map { |a,i| [i,a.clues-c_shift] }.to_json)%>;
+		var glues = <%=raw(@collection.each_with_index.map { |a,i| [i,a.glues-g_shift] }.to_json)%>;
+		var scribbles = <%=raw(@collection.each_with_index.map { |a,i| [i,a.scribbles-s_shift] }.to_json)%>;
+		
+		var plot = $.plot($("#graph"),
+			   [ { data: users, label: "Users"},
+			    { data: clues, label: "Clues" },
+			    { data: glues, label: "Glues" },
+			    { data: scribbles, label: "Scribbles" } ], {
+				   series: {
+					   lines: { show: true  },
+					   points: { show: true }
+				   },
+				   grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#fff", "#eee"] } },
+				   yaxis: { min: 0, max: <%=@to_a.glues-g_shift%> },
+				   colors: ["#539F2E", "#3C67A5", "#FC67A0", "#3F6705"]
+				 });
+
+		function showTooltip(x, y, contents) {
+			$('<div id="tooltip">' + contents + '</div>').css( {
+				position: 'absolute',
+				display: 'none',
+				top: y + 5,
+				left: x + 5,
+				border: '1px solid #fdd',
+				padding: '2px',
+				'background-color': '#dfeffc',
+				opacity: 0.80
+			}).appendTo("body").fadeIn(200);
+		}
+
+		var previousPoint = null;
+		$("#graph").bind("plothover", function (event, pos, item) {
+			$("#x").text(pos.x.toFixed(2));
+			$("#y").text(pos.y.toFixed(2));
+
+				if (item) {
+					if (previousPoint != item.dataIndex) {
+						previousPoint = item.dataIndex;
+
+						$("#tooltip").remove();
+						var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+
+						showTooltip(item.pageX, item.pageY,
+									item.series.label +" "+ y);
+					}
+				}
+				else {
+					$("#tooltip").remove();
+					previousPoint = null;
+				}
+		});
+		
+
+
+		$("#graph").bind("plotclick", function (event, pos, item) {
+			if (item) {
+				$("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+				plot.highlight(item.series, item.datapoint);
+			}
+		});
+	}
+});
+	
+	
+</script>
+
+
+
+
 			
 <div id="content" class="span10">
 			<!-- content starts -->
 	<div class="box">
 		<div class="box-content">
-			<%= form_tag("/admin/graphs", :method => "post") do %>
+			<%= form_tag("/admin/summary", :method => "post") do %>
 				<fieldset>
 					<div class="control-group">
 						<label class="control-label" for="selectError3">From</label>
@@ -16,13 +102,21 @@
 					</div>
 				</fieldset>
 			
+			<label class="checkbox inline" style="width:250px">
+				<div class="checker" id="uniform-inlineCheckbox1"><span><input type="checkbox" id="inlineCheckbox1" name="differencial" value="true" style="opacity: 0;" <%=params[:differencial]=="true" ? "checked" : ""%>></span></div>
+				<span class="label">Diffrencial</span>
+			</label>
+			
 			<button type="submit" class="btn btn-primary">Show</button>
 			
 			<% end %>
 		</div>
 	</div>
 			
-			
+		<div class="box-content">
+			<div id="graph"  class="center" style="height:500px" ></div>
+			<p id="hoverdata">Mouse position at (<span id="x">0</span>, <span id="y">0</span>). <span id="clickdata"></span></p>
+		</div>
 								
 	<div class="box span4" style="height: 200px;">
 		<div class="box-header well" data-original-title>

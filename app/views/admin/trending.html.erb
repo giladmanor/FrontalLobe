@@ -15,21 +15,36 @@
 	
 	<%= form_tag("/admin/set_trending", :method => "post") do %>
   
-	
-	<div class="controls">
+	<fieldset>
+	<div class="sortable ui-sortable">
 	  <%
 	  @trending.each{|t|
 	  	%>
-		<label class="checkbox inline">
-			<div class="checker" id="uniform-inlineCheckbox1"><span><input type="checkbox" id="inlineCheckbox1" name="w[]" value="<%=t%>" style="opacity: 0;"></span></div> <%=t%>
-		</label>
+	  	
+			<label class="checkbox inline" style="width:250px">
+				<div class="checker" id="uniform-inlineCheckbox1"><span><input type="checkbox" id="inlineCheckbox1" name="w[]" value="<%=t["name"]%>" style="opacity: 0;" checked></span></div>
+				<span class="label"><%=t["name"]%> (<%=t["rank"]%>)</span>
+			</label>
+		
 	  	<%
 	  }
 	  %>
 	  
 	</div>
-	
-		<button type="submit" class="btn btn-primary">Save changes</button>
+	</fieldset>
+		<fieldset>
+			<div class="control-group" style="margin-left: 20px;margin-top: 20px;">
+				<label class="control-label" for="focusedInput">Add yourself (, seperated)</label>
+				<div class="controls">
+				  <input name="extra_values" class="input-xlarge focused" id="focusedInput" type="text" value="">
+				</div>
+			  </div>
+			</fieldset>
+			
+			<div class="control-group" style="margin-left: 20px;margin-top: 20px;">
+				<button type="submit" class="btn btn-primary">Save changes</button>		
+			</div>
+		
 		
 		
 	<% end %>

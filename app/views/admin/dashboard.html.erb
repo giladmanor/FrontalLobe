@@ -5,7 +5,7 @@
 			
 			
 					
-			<div class="row-fluid sortable">
+			<div class="row-fluid">
 						
 				<div class="box span4" style="height: 200px;">
 					<div class="box-header well" data-original-title>
@@ -126,6 +126,9 @@
 					</div>
 				</div><!--/span-->
 
+				</div>
+				<div class="row-fluid">
+
 				<div class="box span4" style="height: 200px;">
 					<div class="box-header well" data-original-title>
 						<h2><i class="icon-list"></i> All time</h2>
@@ -165,11 +168,125 @@
 					</div>
 				</div><!--/span-->
 				
+				<div class="box span4">
+					<div class="box-header well" data-original-title>
+						<h2><i class="icon-list-alt"></i> Realtime Traffic 
+							
+						</h2>
+						<div class="box-icon">
+							<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
+							<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+						<div id="live_users" style="height:190px;"></div>
+							<div id="show_array"></div>
+							<p style="margin-top: 20px;">
+							Concurrent 
+								<div class="controls">
+								  <select id="rating_type" onchange="change_rating_type($('#rating_type').val())">
+									<option value="data_serves">Data Serves</option>
+									<option value="uniqe_users">Unique Users</option>
+									<option value="anonimouse">Anonimouse Users</option>
+									
+								  </select>
+								</div>
+							</p>
+					</div>
+				</div>
+				
+				<div class="box span4" style="height: 200px;">
+					<div class="box-header well" data-original-title>
+						<h2><i class="icon-list-alt"></i>Data Serves Estimation</h2>
+						
+					</div>
+					<div class="box-content" style="height:280px;">
+						<ul class="dashboard-list">
+							<li>
+								<a href="#">
+									<i class="icon-user"></i>                               
+									<span class="green"><%=@data_serves * 20 + 863119%></span>
+									Scribbles                                    
+								</a>
+							</li>
+						  <li>
+							<a href="#">
+							  <i class=" icon-plus-sign"></i>
+							  <span class="red"><%=@data_serves * 12 + 1792166%></span>
+							  Clue Suggestions
+							</a>
+						  </li>
+						  
+						</ul>
+					</div>
+				</div><!--/span-->
 				
 			</div><!--/row-->
        
 					<!-- content ends -->
 			</div><!--/#content.span10-->
-				
-				
+
+<input id="tokentag" type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" />
+
+<script type="text/javascript">
+$(document).ready(function(){	
+	if($("#live_users").length)
+	{
+		var options = {
+			series: { shadowSize: 1 }, // drawing is faster without shadows
+			yaxis: { min: 0, max: 50 },
+			xaxis: { show: false }
+		};
+		var plot = $.plot($("#live_users"), [ wrapData() ] , options);
+		function update() {
+			get_live_users();
+			plot.setData( [ wrapData() ]);
+			// since the axes don't change, we don't need to call plot.setupGrid()
+			plot.draw();
+			
+			setTimeout(update, 2000);
+		}
+
+		update();
+	}
+});
+
+function change_rating_type(f){
+	rating_type_method = f;
+	concurrent_users = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+}
+
+var rating_type_method="data_serves";
+
+var concurrent_users = [];
+
+function get_live_users(){
+	var tokentag = $('#tokentag').val();
+	$.ajax({
+	  type: "POST",
+	  url: "/admin/"+rating_type_method,
+	  data: {"authenticity_token": tokentag},
+	  success: function(data){
+	  	concurrent_users.push(data);
+	  	
+	  	//$('#show_array').text(wrapData());
+	  }
+	});
+}
+
+
+function wrapData() {
+		if (concurrent_users.length > 30)
+			concurrent_users = concurrent_users.slice(1);
+
+		if (concurrent_users.length ==0){
+			concurrent_users = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+		}
+		// zip the generated y values with the x values
+		var res = [];
+		for (var i = 0; i < concurrent_users.length; ++i)
+			res.push([i, concurrent_users[i]])
+		return res;
+}
+</script>			
 		

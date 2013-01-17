@@ -1,4 +1,6 @@
-@import url(http://fonts.googleapis.com/css?family=Shojumaru);
+body{
+	font-family:'century gothic'
+}
 
 select{
 background-color:#fff;
@@ -27,6 +29,7 @@ background: linear-gradient(to bottom,  rgba(30,87,153,0.2) 0%,rgba(125,185,232,
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#331e5799', endColorstr='#007db9e8',GradientType=0 );
 }
 
+
 .top-block span{
 clear:both;
 }
@@ -44,7 +47,7 @@ right: -5px;
 line-height: 16px;
 height: 16px;
 padding: 0 5px;
-font-family: Arial, sans-serif;
+font-family: century-gothic, sans-serif;
 color: white !important;
 text-shadow: 0 1px 
 hsla(0, 0%, 0%, 0.25);
@@ -343,7 +346,7 @@ margin-right:-2px;
 margin-left:-2px;
 }
 .brand{
-font-family: 'Shojumaru', cursive, Arial, serif; 
+font-family: 'century gothic'; 
 letter-spacing:2px;
 text-shadow:1px 1px 5px rgba(0, 0, 0, 0.5);
 width:166px;

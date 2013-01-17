@@ -50,22 +50,26 @@ class AdminController < ApplicationController
       :month=>todays_agg.scribbles-last_month.scribbles
     } 
     
+    @data_serves = Event.all.size
     
   end
   
-  def graphs
+  def summary
     @from_d = params[:from_date].nil? ? 7.day.ago : Date.new(params[:from_date][:year].to_i,params[:from_date][:month].to_i,params[:from_date][:day].to_i)
     @to_d = params[:to_date].nil? ? Time.now : Date.new(params[:to_date][:year].to_i,params[:to_date][:month].to_i,params[:to_date][:day].to_i)
     
     
-    from_a = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",@from_d]).last || {}
+    @from_a = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",@from_d]).last || {}
     @to_a = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp<?",@to_d]).last || {}
     
+    @collection = Aggregate.order("timestamp ASC").find(:all,:conditions=>["timestamp>? and timestamp<?",@from_d,@to_d])
+    logger.debug @collection.length 
+    
     @users_total = @to_a.users
-    @users = @to_a.users - from_a.users
-    @clues = @to_a.clues - from_a.clues
-    @glues = @to_a.glues - from_a.glues
-    @scribbles = @to_a.scribbles - from_a.scribbles
+    @users = @to_a.users - @from_a.users
+    @clues = @to_a.clues - @from_a.clues
+    @glues = @to_a.glues - @from_a.glues
+    @scribbles = @to_a.scribbles - @from_a.scribbles
     
   end
   
@@ -74,6 +78,27 @@ class AdminController < ApplicationController
     @lat = 0.0
     @lng = 0.0
     render :layout=>false
+  end
+  
+  def data_serves
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>?",last]).size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
+  end
+  
+  def uniqe_users
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>? and user_id IS NOT NULL",last]).map{|e| e.user_id}.uniq.size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
+  end
+  
+  def anonimouse
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>? and user_id IS NULL",last]).size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
   end
   
   
@@ -89,9 +114,10 @@ class AdminController < ApplicationController
   end
   
   def set_trending
+    
     k="liebrubhvs984bsly48!35yf023985syv408l4ylst0w934ucy#as03495tvys0b*4tysa"
     #w=Rack::Utils.escape(params[:w])
-    w=params[:w]
+    w=params[:extra_values].split(",") + params[:w]
     logger.debug w
     r="set_trending_skd48bvk948vsy4lt8veyl4t8vxbl4t8y"
     #url="http://108.171.184.244/bomba/#{r}"
@@ -147,8 +173,8 @@ class AdminController < ApplicationController
     @menu_items = [
       {:name=>'Main',:children=>[
         {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
-        {:name=>'Trending',:class=>"icon-glass",:action=>'/admin/trending'},
-        {:name=>'Summary',:class=>"icon-glass",:action=>'/admin/graphs'},
+        {:name=>'Moderate Trending',:class=>"icon-glass",:action=>'/admin/trending'},
+        {:name=>'Summary',:class=>"icon-glass",:action=>'/admin/summary'},
         {:name=>'Map',:class=>"icon-heart",:action=>'/admin/maps'}
       ]}]
   end
