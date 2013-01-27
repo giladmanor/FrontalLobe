@@ -1,0 +1,116 @@
+<div id="content" class="span10">
+<div class="box">
+		<div class="box-content">
+			<%= form_tag("/admin/stats", :method => "post") do %>
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label" for="selectError3">From</label>
+						<%=select_date(@from_d, :order => [:year, :month, :day],:prefix => 'from_date')%>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="selectError3">To</label>
+						<%=select_date(@to_d, :order => [:year, :month, :day],:prefix => 'to_date')%>
+					</div>
+				</fieldset>
+			
+			
+			
+			<button type="submit" class="btn btn-primary">Show</button>
+			
+			<% end %>
+		</div>
+	</div>
+
+	<div class="box span4" style="width: 500px">
+		<div class="box-header well" data-original-title>
+			<h2><i class="icon-list"></i> Usage</h2>
+	
+	<%
+	user_avrage_pluses=0
+	@users
+	@events_per_user.each{|n|
+		user_avrage_pluses += n
+	}
+	user_avrage_pluses = user_avrage_pluses / (@events_per_user.length)
+	
+	ip_avrage_pluses=0
+	@anonimouses
+	@events_per_ip.each{|n|
+		ip_avrage_pluses += n
+	}
+	ip_avrage_pluses = ip_avrage_pluses / (@events_per_ip.length)
+	%>
+	
+	
+			
+		</div>
+		<div class="box-content" >
+			<ul class="dashboard-list">
+				<li>
+					<a href="#">
+						Registered Users
+						
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						Total Active
+						<span class="green"><%= @users.length%></span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						That plused
+						<span class="green"><%= @events_per_user.length%></span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						                             
+						Went thorugh 
+						<span class="green"><%= user_avrage_pluses%></span>
+						views until the first plus/add                                   
+					</a>
+				</li>
+				</ul>
+		</div>
+			 <div class="box-content" >
+			<ul class="dashboard-list">
+				 <li>
+					<a href="#">
+						Anonymouse Users
+						
+					</a>
+				</li>
+			  <li>
+					<a href="#">
+						Total Active
+						<span class="green"><%= @anonimouses.length%></span>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						That plused
+						<span class="green"><%= @events_per_ip.length%></span>
+					</a>
+				</li>
+			  <li>
+				<a href="#">
+				  
+				  Went thorugh 
+				  <span class="red"><%= ip_avrage_pluses%></span>
+				  views until the first plus/add
+				</a>
+			  </li>
+			  
+			</ul>
+		</div>
+	</div>
+	
+	
+	
+			<!-- content ends -->
+</div><!--/#content.span10-->
+				
+				
+		

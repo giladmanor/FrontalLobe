@@ -1,0 +1,167 @@
+
+<script type="text/javascript">
+		//chart with points
+<%
+serves_shift = params[:differencial]=="true" ? @serves.first : 0
+opens_shift = params[:differencial]=="true" ? @opens.first : 0
+creation_shift = params[:differencial]=="true" ? @creation.first : 0
+
+
+%>		
+		
+$(document).ready(function(){
+	if($("#graph").length)
+	{
+		var serves = <%=raw(@serves.each_with_index.map { |a,i| [i,a - serves_shift] }.to_json)%>;
+		var opens = <%=raw(@opens.each_with_index.map { |a,i| [i,a - opens_shift] }.to_json)%>;
+		var creation = <%=raw(@creation.each_with_index.map { |a,i| [i,a - creation_shift] }.to_json)%>;
+		
+		
+		var plot = $.plot($("#graph"),
+			   [ { data: serves, label: "Data Serves"},
+			    { data: opens, label: "Media Open" },
+			    { data: creation, label: "Scribble Creation" }],
+			     {
+				   series: {
+					   lines: { show: true  },
+					   points: { show: true }
+				   },
+				   grid: { hoverable: true, clickable: true, backgroundColor: { colors: ["#fff", "#eee"] } },
+				   yaxis: { min: 0, max: <%=@serves.max-serves_shift%> },
+				   colors: ["#539F2E", "#3C67A5", "#FC67A0", "#3F6705"]
+				 });
+
+		function showTooltip(x, y, contents) {
+			$('<div id="tooltip">' + contents + '</div>').css( {
+				position: 'absolute',
+				display: 'none',
+				top: y + 5,
+				left: x + 5,
+				border: '1px solid #fdd',
+				padding: '2px',
+				'background-color': '#dfeffc',
+				opacity: 0.80
+			}).appendTo("body").fadeIn(200);
+		}
+
+		var previousPoint = null;
+		$("#graph").bind("plothover", function (event, pos, item) {
+			$("#x").text(pos.x.toFixed(2));
+			$("#y").text(pos.y.toFixed(2));
+
+				if (item) {
+					if (previousPoint != item.dataIndex) {
+						previousPoint = item.dataIndex;
+
+						$("#tooltip").remove();
+						var x = item.datapoint[0].toFixed(2),
+							y = item.datapoint[1].toFixed(2);
+
+						showTooltip(item.pageX, item.pageY,
+									item.series.label +" "+ y);
+					}
+				}
+				else {
+					$("#tooltip").remove();
+					previousPoint = null;
+				}
+		});
+		
+
+
+		$("#graph").bind("plotclick", function (event, pos, item) {
+			if (item) {
+				$("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+				plot.highlight(item.series, item.datapoint);
+			}
+		});
+	}
+});
+	
+	
+</script>
+
+
+
+
+			
+<div id="content" class="span10">
+			<!-- content starts -->
+	<div class="box">
+		<div class="box-content">
+			<%= form_tag("/admin/data_report", :method => "post") do %>
+				<fieldset>
+					<div class="control-group">
+						<label class="control-label" for="selectError3">From</label>
+						<%=select_date(@from_d, :order => [:year, :month, :day],:prefix => 'from_date')%>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="selectError3">To</label>
+						<%=select_date(@to_d, :order => [:year, :month, :day],:prefix => 'to_date')%>
+					</div>
+				</fieldset>
+			
+			
+			
+			<button type="submit" class="btn btn-primary">Show</button>
+			
+			<% end %>
+		</div>
+	</div>
+			
+		<div class="box-content">
+			<div id="graph"  class="center" style="height:500px" ></div>
+			<p id="hoverdata">Mouse position at (<span id="x">0</span>, <span id="y">0</span>). <span id="clickdata"></span></p>
+		</div>
+								
+	<div class="box span4" style="height: 200px;">
+		<div class="box-header well" data-original-title>
+			<h2><i class="icon-list"></i> Ratios</h2>
+	
+	<%
+	total_serves = 1
+	total_opens = 0
+	total_creations = 0
+	
+	@serves.length.times{|i|
+		total_serves += @serves[i]
+		total_opens += @opens[i]
+		total_creations += @creation[i]
+		
+	}
+	
+	
+	
+	%>
+	
+	
+			
+		</div>
+		<div class="box-content" style="height:280px;">
+			<ul class="dashboard-list">
+				<li>
+					<a href="#">
+						<i class="icon-user"></i>                               
+						<span class="green"><%= sprintf "%.02f", (total_opens.to_f*100)/total_serves.to_f%>%</span>
+						Media Opens to Serves                                    
+					</a>
+				</li>
+			  <li>
+				<a href="#">
+				  <i class=" icon-plus-sign"></i>
+				  <span class="red"><%= sprintf "%.02f", (total_creations*100)/total_serves%>%</span>
+				  Scribble Creations to Serves
+				</a>
+			  </li>
+			  
+			</ul>
+		</div>
+	</div>
+	
+	
+	
+			<!-- content ends -->
+</div><!--/#content.span10-->
+				
+				
+		

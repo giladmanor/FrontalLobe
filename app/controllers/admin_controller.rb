@@ -73,6 +73,62 @@ class AdminController < ApplicationController
     
   end
   
+  def data_report
+    @from_d = params[:from_date].nil? ? 7.day.ago : Date.new(params[:from_date][:year].to_i,params[:from_date][:month].to_i,params[:from_date][:day].to_i)
+    @to_d = params[:to_date].nil? ? Time.now : Date.new(params[:to_date][:year].to_i,params[:to_date][:month].to_i,params[:to_date][:day].to_i)
+    
+    @collection = Event.find(:all,:conditions=>["created_at>? and created_at<?",@from_d,@to_d])
+    logger.debug "Query resulted in #{@collection.size}"
+    days = @to_d-@from_d 
+    logger.debug "parse as #{days} days"
+    @serves=[]
+    @opens=[]
+    @creation=[]
+    
+    if days < 100
+      days.to_i.times{|i|
+        events=@collection.select{|e| e.created_at<(@from_d+(i+1).days) && e.created_at>(@from_d+(i).days)}
+        @serves<<events.size
+        @opens<<events.select{|e| e.user_action=="browser.open_content"}.size
+        @creation<<events.select{|e| e.user_action=="browser.create_scribble"}.size
+        
+      }
+    else
+      @serves=[0]
+      @opens=[0]
+      @creation=[0]
+    end
+    
+    logger.debug "-- #{@serves.length} \n -- #{@serves.inspect}"
+    
+  end
+  
+  
+  def stats
+    
+    @from_d = params[:from_date].nil? ? 7.day.ago : Date.new(params[:from_date][:year].to_i,params[:from_date][:month].to_i,params[:from_date][:day].to_i)
+    @to_d = params[:to_date].nil? ? Time.now : Date.new(params[:to_date][:year].to_i,params[:to_date][:month].to_i,params[:to_date][:day].to_i)
+    
+    add_arr = ["browser.plus_clue","browser.add_clue"]
+    
+    @users = Event.find(:all,:conditions=>["created_at>? and created_at<?",@from_d,@to_d]).map{|e| e.user_id}.uniq.compact
+    @events_per_user = @users.map{|u| 
+      user_actions = Event.find(:all,:conditions=>["user_id=?",u]).map{|e| e.user_action}
+      fi_plus= user_actions.index{|a| add_arr.include?(a) }
+      brw_until_plus = user_actions.take(fi_plus).reject{|a| a=="browser.get_scribbles"} unless  fi_plus.nil?
+      brw_until_plus.nil? ? nil : brw_until_plus.length
+    }.compact
+    
+    @anonimouses = Event.find(:all,:conditions=>["created_at>? and created_at<? and user_id is null",@from_d,@to_d]).map{|e| e.ip}.uniq.compact
+    @events_per_ip = @anonimouses.map{|u| 
+      user_actions = Event.find(:all,:conditions=>["ip=?",u]).map{|e| e.user_action}
+      fi_plus=user_actions.index{|a| add_arr.include?(a) }
+      brw_until_plus = user_actions.take(fi_plus).reject{|a| a=="browser.get_scribbles"} unless  fi_plus.nil?
+      brw_until_plus.nil? ? nil : brw_until_plus.length
+    }.compact
+  end
+  
+  
   def maps
     
     @lat = 0.0
@@ -96,7 +152,28 @@ class AdminController < ApplicationController
   
   def anonimouse
     last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
-    res = Event.find(:all,:conditions=>["created_at>? and user_id IS NULL",last]).size
+    res = Event.find(:all,:conditions=>["created_at>? and user_id IS NULL",last],:group=>"ip").size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
+  end
+  
+  def sribbles
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>? and user_action=?",last,"browser.get_scribbles"]).size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
+  end
+  
+  def media_opens
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>? and user_action=?",last,"browser.open_content"]).size
+    render :text=> res
+    logger.debug "$$$$$$$$$$$$     #{res}"
+  end
+  
+  def plussing
+    last= params[:last].nil? ? 1.minute.ago : params[:last].to_i.minute.ago 
+    res = Event.find(:all,:conditions=>["created_at>? and user_action=?",last,"browser.plus_clue"]).size
     render :text=> res
     logger.debug "$$$$$$$$$$$$     #{res}"
   end
@@ -175,6 +252,8 @@ class AdminController < ApplicationController
         {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
         {:name=>'Moderate Trending',:class=>"icon-glass",:action=>'/admin/trending'},
         {:name=>'Summary',:class=>"icon-glass",:action=>'/admin/summary'},
+        {:name=>'Data Serves',:class=>"icon-glass",:action=>'/admin/data_report'},
+        {:name=>'Usage',:class=>"icon-glass",:action=>'/admin/stats'},
         {:name=>'Map',:class=>"icon-heart",:action=>'/admin/maps'}
       ]}]
   end
