@@ -1,0 +1,68 @@
+
+	<div class="row-fluid">
+				<div class="box span9">
+					<div class="box-header well" data-original-title="">
+						<h2><i class="icon-edit"></i> Details for <%=@user["full_name"]%></h2>
+						<div class="box-icon">
+							
+							<a href="/users/index" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
+						</div>
+					</div>
+					<div class="box-content">
+						<form class="form-horizontal action="/users/set/<%=@user["id"]%>">
+							<fieldset>
+							  <div class="control-group">
+							     <img class="" src="http://wikibrains.com/user_images/<%=@user["avatar"]%>" alt="Sample Image 1" style="display: block;max-width: 128px;max-height: 128px">
+							  </div>
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">Avatar URI</label>
+								<div class="controls">
+								  <input class="input-xlarge" id="focusedInput" type="text" value="<%=@user["avatar"]%>">
+								</div>
+							  </div>
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">Email Address</label>
+								<div class="controls">
+								  <input class="input-xlarge" id="focusedInput" type="text" value="<%=@user["email"]%>">
+								</div>
+							  </div>
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">password</label>
+								<div class="controls">
+								  <input class="input-xlarge" id="focusedInput" type="text" value="<%=@user["password"]%>">
+								</div>
+							  </div>
+							  <div class="form-actions">
+								<button type="submit" class="btn btn-primary">Save changes</button>
+								<button class="btn">Cancel</button>
+								<a href="/users/surrogate/<%=@user["id"]%>" target="_blank">surrogate</a>
+							  </div>
+							  <hr />
+							  <hr />
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">Clues</label>
+								<div class="controls">
+								  <label class="control-label" for="focusedInput"><%=@user["clues"]%></label>
+								</div>
+							  </div>
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">Glues</label>
+								<div class="controls">
+								  <label class="control-label" for="focusedInput"><%=@user["glues"]%></label>
+								</div>
+							  </div>
+							  <div class="control-group">
+								<label class="control-label" for="focusedInput">Last seen</label>
+								<div class="controls">
+								  <label class="control-label" for="focusedInput"><%=@user["last_action"].present? ? distance_of_time_in_words(Time.now,@user["last_action"]) : "N/A"%></label>
+								</div>
+							  </div>
+
+							  
+							  
+							</fieldset>
+						</form>
+					</div>
+				</div><!--/span-->
+
+			</div>

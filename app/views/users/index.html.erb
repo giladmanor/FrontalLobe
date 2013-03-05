@@ -1,0 +1,51 @@
+
+			
+			<div class="row-fluid">	
+				<div class="box span9">
+					<div class="box-header well" data-original-title>
+						<h2>Users</h2>
+						<form class="navbar-search pull-left" action="/users/index" style="margin-top: -1px;margin-left: 50px">
+							<input placeholder="Search" class="search-query span2" name="query" type="text" style="width: 200px">
+						</form>
+					</div>
+					<div class="box-content">
+						<table class="table table-bordered table-striped table-condensed">
+							  <thead>
+								  <tr>
+									  <th>User Name</th>
+									  <th>Email Address</th>
+									  <th></th>                                          
+								  </tr>
+							  </thead>   
+							  <tbody>
+								<%
+								@users.each{|user|
+									%>
+									<tr>
+										<td><%=user["name"]%></td>
+										<td class="center"><%=user["email"]%></td>
+										<td class="center">
+											<a class="btn btn-success" href="/users/load/<%=user["id"]%>">
+												<i class="icon-zoom-in icon-white"></i>  
+												View                                            
+											</a>
+										</td>                                       
+									</tr>
+										
+									
+									<%
+									}
+								
+								
+								%>
+								
+								
+								                                   
+							  </tbody>
+						 </table>  
+						    
+					</div>
+				</div><!--/span-->
+			</div><!--/row-->
+    
+			

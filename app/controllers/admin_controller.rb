@@ -250,11 +250,11 @@ class AdminController < ApplicationController
     @menu_items = [
       {:name=>'Main',:children=>[
         {:name=>'Dashboard',:class=>"icon-home",:action=>'/admin/dashboard'},
-        {:name=>'Moderate Trending',:class=>"icon-glass",:action=>'/admin/trending'},
-        {:name=>'Summary',:class=>"icon-glass",:action=>'/admin/summary'},
-        {:name=>'Data Serves',:class=>"icon-glass",:action=>'/admin/data_report'},
-        {:name=>'Usage',:class=>"icon-glass",:action=>'/admin/stats'},
-        {:name=>'Map',:class=>"icon-heart",:action=>'/admin/maps'}
+        {:name=>'Moderate Trending',:class=>"icon-thumbs-up",:action=>'/admin/trending'},
+        {:name=>'Summary',:class=>"icon-list",:action=>'/admin/summary'},
+        {:name=>'Data Serves',:class=>"icon-signal",:action=>'/admin/data_report'},
+        {:name=>'Usage',:class=>"icon-globe",:action=>'/admin/stats'},
+        {:name=>'Users',:class=>"icon-user",:action=>'/users/index'}
       ]}]
   end
   
