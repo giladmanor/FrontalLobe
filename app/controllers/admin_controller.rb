@@ -254,7 +254,9 @@ class AdminController < ApplicationController
         {:name=>'Summary',:class=>"icon-list",:action=>'/admin/summary'},
         {:name=>'Data Serves',:class=>"icon-signal",:action=>'/admin/data_report'},
         {:name=>'Usage',:class=>"icon-globe",:action=>'/admin/stats'},
-        {:name=>'Users',:class=>"icon-user",:action=>'/users/index'}
+        {:name=>'Users',:class=>"icon-user",:action=>'/users/index'},
+        {:name=>'Top scribblers',:class=>"icon-user",:action=>'/users/top_scribblers'},
+        {:name=>'Top active',:class=>"icon-user",:action=>'/users/top_active'}
       ]}]
   end
   

@@ -1,0 +1,32 @@
+
+			
+<div class="row-fluid">	
+	<div class="box span4">
+		<div class="box-header well" data-original-title>
+			<h2><i class="icon-list-alt"></i>Top scriblers</h2>
+			
+		</div>
+		<div class="box-content" style="height:280px;">
+			<ul class="dashboard-list">
+				<%
+				@active.each{|user|
+					%>
+					<li>
+						<a href="#">
+							<i class="icon-user"></i>                               
+							<a href="/users/load/<%=user["id"]%>"><%=user[:name]%></a>
+							<span class="green"><%=user[:count]%></span>
+						</a>
+					</li>	
+					<%
+				}
+				%>
+			</ul>
+		</div>
+	</div><!--/span-->
+	
+	
+	
+</div><!--/row-->
+    
+			
