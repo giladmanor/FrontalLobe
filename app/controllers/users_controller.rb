@@ -1,3 +1,4 @@
+
 class UsersController < AdminController
   before_filter :request_filter
   
@@ -17,27 +18,39 @@ class UsersController < AdminController
   end
   
   def surrogate
-    redirect_to "http://dev.wikibrains.com/mishtamshim/use_token?token=#{User.get_token(params[:id])}"
+    redirect_to "http://wikibrains.com/mishtamshim/use_token?token=#{User.get_token(params[:id])}"
   end
   
   def top_scribblers
-    @scribblers = Event.top(100,"browser.create_scribble")
-    logger.debug @scribblers.inspect 
-    users = User.get_names_of(@scribblers.map{|u| u[:id]}.to_json)
-    logger.debug users.inspect
-    @scribblers.map!{|u| u.merge!(users[u[:id].to_s] ) unless users[u[:id]].nil?}
-    
-    logger.debug "|||||||||||||||||||||||||||||||||||||||||||||||||||"
-    logger.debug @scribblers.inspect 
-    logger.debug "|||||||||||||||||||||||||||||||||||||||||||||||||||"
-    #@active =  Event.top(100,"%")
-    #@gluers = Event.top(10,"browser.create_scribble")
+    @items = get_scribblers
+  end
+  
+  def top_scribblers_csv
+    send_data get_scribblers.map{|u| "#{u["name"]},#{u["email"]}"}.join("\n"),:type => 'text/csv; charset=iso-8859-1; header=present',:disposition => "attachment; filename=users.csv" 
+     
+  end
+  
+  def get_scribblers
+    scribblers = Event.top(100,"browser.create_scribble")
+    users = User.get_names_of(scribblers.map{|u| u[:id]}.to_json)
+    scribblers.map{|u| u.merge!(users[u[:id].to_s] )}
   end
   
   def top_active
-    @active =  Event.top(100,"%")
-    users = User.get_names_of(@active.map{|u| u[:id]}.to_json)
-    @active.map{|u| u.merge(users[u[:id]]) unless users[u[:id]].nil?}
+    @items = get_active
   end
+  
+  def top_active_csv
+    send_data get_active.map{|u| "#{u["name"]},#{u["email"]}"}.join("\n"),:type => 'text/csv; charset=iso-8859-1; header=present',:disposition => "attachment; filename=users.csv"
+  end
+  
+  
+  def get_active
+    active =  Event.top(100,"%")
+    users = User.get_names_of(active.map{|u| u[:id]}.to_json)
+    active.map{|u| u.merge!(users[u[:id].to_s] ) unless users[u[:id].to_s].nil?}.compact
+  end
+  
+  
   
 end

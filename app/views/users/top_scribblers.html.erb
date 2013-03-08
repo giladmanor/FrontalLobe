@@ -1,32 +1,50 @@
-
-			
 <div class="row-fluid">	
-	<div class="box span4">
+	<div class="box span9">
 		<div class="box-header well" data-original-title>
-			<h2><i class="icon-list-alt"></i>Top scriblers</h2>
+			<h2>Top Scribblers</h2>
 			
+			
+			<a href="/users/top_scribblers_csv"><button class="btn btn-mini" style="float: right">CSV</button></a>
 		</div>
-		<div class="box-content" style="height:280px;">
-			<ul class="dashboard-list">
-				<%
-				@scribblers.each{|user|
-					%>
-					<li>
-						<a href="#">
-							<i class="icon-user"></i>                               
-							<a href="/users/load/<%=user["id"]%>"><%=user[:name]%></a>
-							<span class="green"><%=user[:count]%></span>
-						</a>
-					</li>	
+		<div class="box-content">
+			<table class="table table-bordered table-striped table-condensed">
+				  <thead>
+					  <tr>
+						  <th>User Name</th>
+						  <th>Email Address</th>
+						  <th>Scribbles</th> 
+						  <th></th>                                          
+					  </tr>
+				  </thead>   
+				  <tbody>
 					<%
-				}
-				%>
-			</ul>
+					@items.each{|user|
+						%>
+						<tr>
+							<td><%=user["name"]%></td>
+							<td class="center"><%=user["email"]%></td>
+							<td class="center"><%=user[:count]%></td>
+							<td class="center">
+								<a class="btn btn-success" href="/users/load/<%=user[:id]%>">
+									<i class="icon-zoom-in icon-white"></i>  
+									View                                            
+								</a>
+							</td>                                       
+						</tr>
+							
+						
+						<%
+						}
+					
+					
+					%>
+					
+					
+					                                   
+				  </tbody>
+			 </table>  
+			    
 		</div>
 	</div><!--/span-->
-	
-	
-	
 </div><!--/row-->
-    
 			
