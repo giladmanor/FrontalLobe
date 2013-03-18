@@ -51,6 +51,8 @@ class UsersController < AdminController
     active.map{|u| u.merge!(users[u[:id].to_s] ) unless users[u[:id].to_s].nil?}.compact
   end
   
-  
+  def export_all_csv
+    send_data User.all(-1).map{|u| "#{u["name"]},#{u["email"]}"}.join("\n"),:type => 'text/csv; charset=iso-8859-1; header=present',:disposition => "attachment; filename=users.csv"
+  end
   
 end
