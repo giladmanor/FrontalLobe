@@ -31,7 +31,7 @@ class User
   
   def self.user_last_action(user_id)
     res = Event.where(:user_id=>user_id).last
-    res.created_at
+    res.created_at unless res.nil?
   end
   
   def self.call(meth,args={})
